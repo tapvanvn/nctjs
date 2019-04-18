@@ -17,12 +17,12 @@ var __pure__waiting__fn = window.__pure__waiting__fn || [];
 
 __pure__waiting__fn.push( function()
 {
-    console.log("init nctphp");
+    console.log("init nctjs");
     var nct = window.nct = {};
 
     nct.handler = 
     {
-        module_load: Class.extend("nctphp_module_load", {
+        module_load: Class.extend("module_load", {
             init:function(dom)
             {
                 var queue = new TaskQueue();
@@ -43,7 +43,7 @@ __pure__waiting__fn.push( function()
                 queue.add(task_init);
             },
         }),
-        dom_binder: Class.extend("nctphp_dom_binder", {
+        dom_binder: Class.extend("dom_binder", {
             $dom:null,
             holder:{},
             explore:function()
@@ -251,7 +251,6 @@ __pure__waiting__fn.push( function()
 
             $(element).find("[nct-init]").each(function(){
             
-
                 var e = this;
                 var types  = $(e).attr("nct-init");
                 types.split(",").forEach(function(type){
