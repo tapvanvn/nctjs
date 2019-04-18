@@ -22,151 +22,6 @@ __pure__waiting__fn.push( function()
 
     nct.handler = 
     {
-        form: Class.extend("nctphp_form",{
-
-            _options:{},
-            init:function(dom)
-            {
-                //be sure dom is form;
-                assert(dom.nodeName.toLowerCase() == 'form');
-                this._options.dom = dom;
-                $(dom).submit(this.onSubmit);
-            },
-            onSubmit:function(event)
-            {
-                
-                var form = Pure.event.getActor(event);
-                var handler = nct.core.findHandle("form", form);
-                console.log ( "hey i am submitting. will you do some check?");
-
-                var validate_result = handler.validate();
-                console.log(validate_result);
-                var total_result = true;
-                validate_result.forEach(function(element)
-                {
-                    console.log(element);
-
-                    var require = $(element.element).data("require") == "true" || $(element.element).data("require") == true;
-
-                    for(key in element.points)
-                    {
-                        if(!element.points[key])
-                        {
-                            if(require)
-                            {
-                                total_result = false;
-                                $(element.element).addClass("validate--error");
-                                break;
-                            }
-                            else 
-                            {
-                                $(element.element).addClass("validate--warning");
-                            }
-                        }
-                    }
-
-                });
-
-                if(total_result)
-                {
-                    console.log("it is ok");
-
-                }
-                else 
-                {
-                    event.preventDefault();
-                    console.log("recheck your self man, some thing wrong with your data!");
-                }
-                
-            },
-            validate_null : function(val)
-            {
-                console.log("check_null:" + val);
-                return val.length > 0;
-            },
-            validate_full_name: function(val)
-            {
-                console.log("check_full_name:" + val);
-                return val.length > 0;
-            },
-            validate_phone_number : function(val)
-            {
-                console.log("check_phone_number:" + val);
-                return true;
-            },
-            validate_email_address : function(val)
-            {
-                console.log("check_email_address:" + val);
-                return true;
-            },
-            validate:function()
-            {
-                var result = [];
-                function validate_element(element, rs)
-                {
-                    
-                    var q_element = $(element);
-                    
-                    if(q_element.attr("name"))
-                    {
-                        q_element.removeClass('validate--error validate--warning');
-
-                        var rs_obj = {element: element, points:[]};
-                        
-                        var val = q_element.val();
-
-                        console.log(val);
-
-                        var require = q_element.data("require");
-
-                        if(require == "true" || require == true)
-                        {
-                            if(element.nodeName.toLowerCase() == 'select' && val.toLowerCase() == 'none')
-                            {
-                                val = '';
-                            }
-                            rs_obj.points['null'] = this.validate_null(val);
-                        }
-
-                        var data_type = q_element.data("type");
-
-                        if(data_type == 'email_address')
-                        {
-                            rs_obj.points[data_type] = this.validate_email_address(val);
-                        }
-                        else if(data_type == 'phone_number') 
-                        {
-                            rs_obj.points[data_type] = this.validate_phone_number(val);
-                        } 
-                        else if(data_type == 'full_name')
-                        {
-                            rs_obj.points[data_type] = this.validate_full_name(val);
-                        }
-
-                        rs[rs.length] = rs_obj;
-                    }
-                    else 
-                    {
-                        if(element.childNodes.length > 0)
-                        {
-                            var context = this;
-                            element.childNodes.forEach(function(node){
-                                validate_element.call(context, node, rs);
-                            });
-                        }
-                    }
-                }
-                //data-type: [full_name, phone_number, email_address]
-                //data-require : [true, false] 
-                var form = this._options.dom;
-                validate_element.call(this, form, result);
-
-                console.log("sure man");
-
-
-                return result;
-            }
-        }),
         module_load: Class.extend("nctphp_module_load", {
             init:function(dom)
             {
@@ -417,11 +272,10 @@ __pure__waiting__fn.push( function()
         }
     };
 
-    window.__pure__.trigger("nct.init",{});
-
-    nct.core.regType("form", nct.handler.form);
     nct.core.regType("module_load", nct.handler.module_load);
     nct.core.regType("dom_binder", nct.handler.dom_binder);
+
+    window.__pure__.trigger("nct.init",{});
 
     $(document).ready(function()
     {
