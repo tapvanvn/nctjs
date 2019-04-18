@@ -1,17 +1,4 @@
 
-function isset(check_var)
-{
-    return (typeof(check_var) !== 'undefined');
-}
-
-function assert(equation)
-{
-    if(!equation)
-    {
-        console.error("assert fail! some thing wrong with this equation!" );
-    }
-}
-
 //we assume that pure/src/pure.min.js is there
 var __pure__waiting__fn = window.__pure__waiting__fn || [];
 
