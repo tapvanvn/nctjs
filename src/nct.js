@@ -118,7 +118,7 @@ __pure__waiting__fn.push( function()
 
         regType:function(type, handle_class)
         {
-            if( isset(this._bind_class[type]) )
+            if( typeof(this._bind_class[type]) != 'undefined')
             {
                 console.log("class:" + type + " is existed.");
             }
@@ -131,8 +131,7 @@ __pure__waiting__fn.push( function()
 
         binding:function (type, dom)
         {
-            var assert = isset(this._bind_class[type]);
-            if(isset(this._bind_class[type]))
+            if(typeof(this._bind_class[type]) != 'undefined')
             {
                 var prop_name = "nct-"+ type;
 
