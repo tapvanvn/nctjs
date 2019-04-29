@@ -1,4 +1,5 @@
 
+//author: Duy Nguyen <tapvanvn@gmail.com>
 //we assume that pure/src/pure.min.js is there
 var __pure__waiting__fn = window.__pure__waiting__fn || [];
 
