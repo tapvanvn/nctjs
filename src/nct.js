@@ -80,6 +80,14 @@ __pure__waiting__fn.push( function()
                     holder.text(val);
                 }
             },
+            bindValue(paths, val)
+            {
+                var holder = this.get(paths);
+                if(holder instanceof jQuery)
+                {
+                    holder.val(val);
+                }
+            },
             bindClass(paths, class_name)
             {
                 var holder = this.get(paths);
