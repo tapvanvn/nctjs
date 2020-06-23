@@ -1,6 +1,7 @@
 
 //author: Duy Nguyen <tapvanvn@gmail.com>
-//we assume that pure/src/pure.min.js is there
+//we assume that pure/src/pure.js is there
+
 var __pure__waiting__fn = window.__pure__waiting__fn || [];
 
 __pure__waiting__fn.push( function()
@@ -8,125 +9,14 @@ __pure__waiting__fn.push( function()
     console.log("init nctjs");
     var nct = window.nct = {};
 
-    nct.handler = 
-    {
-        module_load: Class.extend("module_load", {
-            init:function(dom)
-            {
-                var queue = new TaskQueue();
-
-                $(dom).find('module').each(function(){
-                    var src = $(this).attr('src');
-                    var type = $(this).attr('type');
-                    $(this).remove();
-                    queue.add(new TaskResourceLoad({ url: src, type: type }));
-                });
-
-                var task_init = new Task();
-                task_init.fn = function(task, param) {
-                    console.log('all resources have been loaded. init something here');
-
-                    window.nct.core.bind(dom);
-                };
-                queue.add(task_init);
-            },
-        }),
-        dom_binder: Class.extend("dom_binder", {
-            $dom:null,
-            holder:{},
-            explore:function()
-            {
-                var self = this;
-                $doms = this.$dom.find("[nct-binder]").each(function(){
-                    var bind_declare = $(this).attr('nct-binder');
-                    var $bind_dom = $(this);
-                    bind_declare.split(",").forEach(function(type){
-                        var obj = self.holder;
-                        $paths = type.split(".");
-                        while($paths.length > 1)
-                        {
-                            var attr_name = $paths.shift();
-                            if(!obj.hasOwnProperty(attr_name))
-                            {
-                                obj[attr_name] = {};
-                            }
-                            obj = obj[attr_name];
-                        }
-                        var attr_name = $paths.shift();
-                        obj[attr_name] = $bind_dom;
-                    });
-                });
-            },
-            get(paths)
-            {
-                var obj = this.holder;
-                var paths_array = paths.split(".");
-                while(paths_array.length > 0)
-                {
-                    var attr_name = paths_array.shift();
-                    if(!obj.hasOwnProperty(attr_name))
-                    {
-                        obj[attr_name] = {};
-                    }
-                    obj = obj[attr_name];
-                }
-                return obj;
-            },
-            bindText(paths, val)
-            {
-                var holder = this.get(paths);
-                if(holder instanceof jQuery)
-                {
-                    holder.text(val);
-                }
-            },
-            bindValue(paths, val)
-            {
-                var holder = this.get(paths);
-                if(holder instanceof jQuery)
-                {
-                    holder.val(val);
-                }
-            },
-            bindClass(paths, class_name)
-            {
-                var holder = this.get(paths);
-                if(holder instanceof jQuery)
-                {
-                    holder.addClass(class_name);
-                }
-            },
-            unbindClass(paths, class_name)
-            {
-                var holder = this.get(paths);
-                if(holder instanceof jQuery)
-                {
-                    holder.removeClass(class_name);
-                }
-            },
-            bindProperty(paths, prop_name, val)
-            {
-                var holder = this.get(paths);
-                if(holder instanceof jQuery)
-                {
-                    holder.attr(prop_name, val);
-                }
-            },
-            init(dom)
-            {
-                this.$dom = $(dom);
-                this.explore();
-            }
-        })
-    }
-
     //core
     nct.core = {
-        _bind:[],
-        _bind_class:[],
+        _bind:{},
+        _bind_class:{},
 
         regType:function(type, handle_class)
         {
+            console.log("nct:" + type)
             if( typeof(this._bind_class[type]) != 'undefined')
             {
                 console.log("class:" + type + " is existed.");
@@ -140,13 +30,15 @@ __pure__waiting__fn.push( function()
 
         binding:function (type, dom)
         {
+            console.log("binding to type:" + type)
             if(typeof(this._bind_class[type]) != 'undefined')
             {
                 var prop_name = "nct-"+ type;
-
-                if(typeof( $(dom).attr(prop_name) ) === 'undefined' ) 
+                
+                if( !dom.hasAttribute(prop_name) ) 
                 {
                     var id = this._bind_class[type]._gen_id ++;
+                    console.log("nct:" + type + ":" + id)
                     
                     var handle_obj = new this._bind_class[type].class(dom);
 
@@ -159,7 +51,7 @@ __pure__waiting__fn.push( function()
                         this._bind[type] = [];
                         this._bind[type][id] = handle_obj;
                     }
-                    $(dom).attr(prop_name, id);
+                    dom.setAttribute(prop_name, id);
                 }
             }
             
@@ -172,7 +64,7 @@ __pure__waiting__fn.push( function()
         findHandle(type, dom)
         {
             var prop_name = "nct-" + type;
-            var id = $(dom).attr( prop_name );
+            var id = dom.getAttribute( prop_name );
             return this._bind[type][id];
         },
 
@@ -206,9 +98,9 @@ __pure__waiting__fn.push( function()
                 var prop_name = "nct-" + type;
                 while(element)
                 {
-                    if(typeof $(element).attr(prop_name) !== 'undefined')
+                    if(element.hasAttribute(prop_name))
                     {
-                        var id = $(element).attr( prop_name );
+                        var id = element.getAttribute(prop_name);
                         return this._bind[type][id];
                     }
                     element = element.parentNode;
@@ -221,36 +113,41 @@ __pure__waiting__fn.push( function()
         {
             var results = [];
             var prop_name = "nct-" + type;
-            var selector = "["+ $.escapeSelector(  prop_name ) + "]";
-            var self = this;
-            $children = $(dom).find( selector );
-            $children.each(function(){
-                var id = $(this).attr(prop_name);
-                results.push(self._bind[type][id]);
-            });
 
+            var run = (node, fn)=>{
+                fn(node);
+                node.childNodes.forEach((node2)=>{
+                    run(node2, fn)
+                })
+            }
+
+            run(dom, (node)=>{
+                if (node.hasAttribute(prop_name)) {
+                    var id = node.getAttribute(prop_name);
+                    results.push(self._bind[type][id]);
+                }
+            })
+            
             return results;
         },
 
         bind: function(element)
-        {
-            if(typeof $(element).attr("nct-init") !== 'undefined')
-            {
-                var types  = $(element).attr("nct-init");
+        {   
+            if( typeof element.hasAttribute !== 'undefined' 
+            && typeof element.getAttribute !== 'undefined' 
+            && element.hasAttribute("nct-init") ){
+                
+  
+                var types  = element.getAttribute("nct-init") ;
 
-                types.split(",").forEach(function(type){
+                types.toString().split(",").forEach(function(type){
     
                     nct.core.binding(type, element);
                 });
             }
 
-            $(element).find("[nct-init]").each(function(){
-            
-                var e = this;
-                var types  = $(e).attr("nct-init");
-                types.split(",").forEach(function(type){
-                    nct.core.binding(type, e);
-                });
+            element.childNodes.forEach((node)=>{
+                nct.core.bind(node);
             });
         }, 
 
@@ -258,22 +155,36 @@ __pure__waiting__fn.push( function()
         {
             var prop_name = "nct-"+ type;
 
-            if(typeof( $(dom).attr(prop_name) ) === 'undefined' ) 
+            if(dom.hasAttribute(prop_name) ) 
             {
-                var id = $(dom).attr(prop_name);
+                var id = dom.getAttribute(prop_name);
                 this._bind[type].splice(id, 1);
             }
         }
     };
 
-    nct.core.regType("module_load", nct.handler.module_load);
-    nct.core.regType("dom_binder", nct.handler.dom_binder);
-
     window.__pure__.trigger("nct.init",{});
 
-    $(document).ready(function()
-    {
+    var waitReady = (fn)=>{
+        if (document.readyState != 'loading'){
+            fn();
+          } else if (document.addEventListener) {
+            document.addEventListener('DOMContentLoaded', fn);
+          } else {
+            document.attachEvent('onreadystatechange', function() {
+              if (document.readyState != 'loading')
+                fn();
+            });
+          }
+    }
+
+    waitReady(()=>{
+        try{
+        console.log("binding on document");
         nct.core.bind(document);
-    });
+        }catch(err){
+            console.error(err)
+        }
+    })
 
 });
