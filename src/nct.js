@@ -9,6 +9,29 @@ __pure__waiting__fn.push( function()
     console.log("init nctjs");
     var nct = window.nct = {};
 
+    var nct_context = __pure__mod__.Class.extend("nct_conntext", {
+
+        init: function(dom) {
+
+            var self = this
+
+            var findRole = (node)=>{
+
+                if(typeof node.hasAttribute === 'function' && node.hasAttribute("nct-role")){
+
+                    var role = node.getAttribute("nct-role")
+
+                    if (typeof self[role] === 'undefined') {
+
+                        self[role] = node
+                    }
+                }
+            }
+
+            __pure__mod__.Pure.dom.runChildren(dom, findRole)
+        }
+    })
+
     //core
     nct.core = {
         _bind:{},
@@ -40,7 +63,7 @@ __pure__waiting__fn.push( function()
                     var id = this._bind_class[type]._gen_id ++;
                     console.log("nct:" + type + ":" + id)
                     
-                    var handle_obj = new this._bind_class[type].class(dom);
+                    var handle_obj = new this._bind_class[type].class( dom, new nct_context(dom) );
 
                     if(this._bind[type])
                     {
@@ -54,21 +77,20 @@ __pure__waiting__fn.push( function()
                     dom.setAttribute(prop_name, id);
                 }
             }
-            
             else
             {
                 console.log("class:" + type + " is not defined");
             }
         },
 
-        findHandle(type, dom)
+        findHandle: function (type, dom)
         {
             var prop_name = "nct-" + type;
             var id = dom.getAttribute( prop_name );
             return this._bind[type][id];
         },
 
-        findParentHandle(type, dom)
+        findParentHandle: function (type, dom)
         {
             if(typeof(dom.length) !== 'undefined')
             {
@@ -165,24 +187,34 @@ __pure__waiting__fn.push( function()
 
     window.__pure__.trigger("nct.init",{});
 
-    var waitReady = (fn)=>{
-        if (document.readyState != 'loading'){
+    var waitReady = (fn) => {
+
+        if (document.readyState != 'loading') {
+
             fn();
-          } else if (document.addEventListener) {
+        } else if (document.addEventListener) {
+
             document.addEventListener('DOMContentLoaded', fn);
-          } else {
-            document.attachEvent('onreadystatechange', function() {
-              if (document.readyState != 'loading')
-                fn();
+
+        } else {
+
+            document.attachEvent('onreadystatechange', function () {
+
+                if (document.readyState != 'loading')
+                    fn();
             });
-          }
+        }
     }
 
     waitReady(()=>{
+
         try{
-        console.log("binding on document");
-        nct.core.bind(document);
-        }catch(err){
+            console.log("binding on document");
+
+            nct.core.bind(document);
+
+        } catch(err) {
+
             console.error(err)
         }
     })
