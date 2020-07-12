@@ -85,9 +85,12 @@ __pure__waiting__fn.push( function()
 
         findHandle: function (type, dom)
         {
-            var prop_name = "nct-" + type;
-            var id = dom.getAttribute( prop_name );
-            return this._bind[type][id];
+            if (typeof dom.getAttribute === 'function' ){
+                var prop_name = "nct-" + type;
+                var id = dom.getAttribute( prop_name );
+                return this._bind[type][id];
+            }
+            return null;
         },
 
         findParentHandle: function (type, dom)
@@ -120,7 +123,7 @@ __pure__waiting__fn.push( function()
                 var prop_name = "nct-" + type;
                 while(element)
                 {
-                    if(element.hasAttribute(prop_name))
+                    if(typeof node.hasAttribute === 'function' && element.hasAttribute(prop_name))
                     {
                         var id = element.getAttribute(prop_name);
                         return this._bind[type][id];
@@ -133,6 +136,7 @@ __pure__waiting__fn.push( function()
 
         findChildrenHandle(type, dom)
         {
+            var self = this
             var results = [];
             var prop_name = "nct-" + type;
 
@@ -144,7 +148,9 @@ __pure__waiting__fn.push( function()
             }
 
             run(dom, (node)=>{
-                if (node.hasAttribute(prop_name)) {
+
+                if (typeof node.hasAttribute === 'function' && node.hasAttribute(prop_name)) {
+
                     var id = node.getAttribute(prop_name);
                     results.push(self._bind[type][id]);
                 }
@@ -155,10 +161,13 @@ __pure__waiting__fn.push( function()
 
         bind: function(element)
         {   
+            if(element instanceof __pure__mod__.GuiClass) {
+                element = element.dom
+            }
+
             if( typeof element.hasAttribute !== 'undefined' 
             && typeof element.getAttribute !== 'undefined' 
             && element.hasAttribute("nct-init") ){
-                
   
                 var types  = element.getAttribute("nct-init") ;
 
