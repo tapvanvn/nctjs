@@ -34,12 +34,16 @@ __pure__waiting__fn.push( function()
 
     //core
     nct.core = {
+        _debug: false,
         _bind:{},
         _bind_class:{},
 
         regType:function(type, handle_class)
         {
-            console.log("nct:" + type)
+            if (this._debug) {
+
+                console.log("nct:" + type)
+            }
             if( typeof(this._bind_class[type]) != 'undefined')
             {
                 console.log("class:" + type + " is existed.");
@@ -53,7 +57,10 @@ __pure__waiting__fn.push( function()
 
         binding:function (type, dom)
         {
-            console.log("binding to type:" + type)
+            if (this._debug) {
+
+                console.log("binding to type:" + type)
+            }
             if(typeof(this._bind_class[type]) != 'undefined')
             {
                 var prop_name = "nct-"+ type;
@@ -61,7 +68,6 @@ __pure__waiting__fn.push( function()
                 if( !dom.hasAttribute(prop_name) ) 
                 {
                     var id = this._bind_class[type]._gen_id ++;
-                    console.log("nct:" + type + ":" + id)
                     
                     var handle_obj = new this._bind_class[type].class( dom, new nct_context(dom) );
 
@@ -75,12 +81,15 @@ __pure__waiting__fn.push( function()
                         this._bind[type][id] = handle_obj;
                     }
                     dom.setAttribute(prop_name, id);
+
+                    return handle_obj;
                 }
             }
-            else
+            else if (this._debug)
             {
                 console.log("class:" + type + " is not defined");
             }
+            return null;
         },
 
         findHandle: function (type, dom)
