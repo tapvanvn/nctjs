@@ -97,7 +97,9 @@ __pure__waiting__fn.push( function()
             if (typeof dom.getAttribute === 'function' ){
                 var prop_name = "nct-" + type;
                 var id = dom.getAttribute( prop_name );
-                return this._bind[type][id];
+                if (typeof this._bind[type][id] != 'undefined'){
+                    return this._bind[type][id];
+                }
             }
             return null;
         },
@@ -135,7 +137,9 @@ __pure__waiting__fn.push( function()
                     if(typeof node.hasAttribute === 'function' && element.hasAttribute(prop_name))
                     {
                         var id = element.getAttribute(prop_name);
-                        return this._bind[type][id];
+                        if (typeof this._bind[type][id] != 'undefined'){
+                            return this._bind[type][id];
+                        }
                     }
                     element = element.parentNode;
                 }
