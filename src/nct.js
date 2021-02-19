@@ -65,7 +65,7 @@ __pure__waiting__fn.push( function()
             {
                 var prop_name = "nct-"+ type;
                 
-                if( !dom.hasAttribute(prop_name) ) 
+                if( !dom.hasAttribute(prop_name) )
                 {
                     var id = this._bind_class[type]._gen_id ++;
                     
@@ -97,7 +97,7 @@ __pure__waiting__fn.push( function()
             if (typeof dom.getAttribute === 'function' ){
                 var prop_name = "nct-" + type;
                 var id = dom.getAttribute( prop_name );
-                if (typeof this._bind[type][id] != 'undefined'){
+                if (this._bind[type] && this._bind[type][id]){
                     return this._bind[type][id];
                 }
             }
@@ -137,7 +137,7 @@ __pure__waiting__fn.push( function()
                     if(typeof node.hasAttribute === 'function' && element.hasAttribute(prop_name))
                     {
                         var id = element.getAttribute(prop_name);
-                        if (typeof this._bind[type][id] != 'undefined'){
+                        if (this._bind[type] && this._bind[type][id]){
                             return this._bind[type][id];
                         }
                     }
