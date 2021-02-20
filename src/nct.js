@@ -134,7 +134,7 @@ __pure__waiting__fn.push( function()
                 var prop_name = "nct-" + type;
                 while(element)
                 {
-                    if(typeof node.hasAttribute === 'function' && element.hasAttribute(prop_name))
+                    if(typeof element.hasAttribute === 'function' && element.hasAttribute(prop_name))
                     {
                         var id = element.getAttribute(prop_name);
                         if (this._bind[type] && this._bind[type][id]){
