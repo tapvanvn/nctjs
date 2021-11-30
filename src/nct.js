@@ -7,7 +7,7 @@ var __pure__waiting__fn = window.__pure__waiting__fn || [];
 __pure__waiting__fn.push( function()
 {
     console.log("init nctjs");
-    var nct = window.nct = {};
+    var nct = window.nct = { ready: false };
 
     var nct_context = __pure__mod__.Class.extend("nct_conntext", {
 
@@ -234,6 +234,8 @@ __pure__waiting__fn.push( function()
             console.log("binding on document");
 
             nct.core.bind(document);
+            nct.ready = true;
+            window.__pure__.trigger("nct.ready",{});
 
         } catch(err) {
 
