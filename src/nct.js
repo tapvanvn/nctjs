@@ -55,6 +55,15 @@ __pure__waiting__fn.push( function()
             window.__pure__.trigger("nct.handler.reg",{type:type});
         },
 
+        getHandleById(type, id) {
+
+            if (Array.isArray( this._bind[type])) {
+
+                return this._bind[type][id]
+            }
+            return undefined
+        },
+
         binding:function (type, dom)
         {
             if (this._debug) {
@@ -242,5 +251,4 @@ __pure__waiting__fn.push( function()
             console.error(err)
         }
     })
-
 });
