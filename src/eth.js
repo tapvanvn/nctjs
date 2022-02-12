@@ -61,8 +61,10 @@ __pure__waiting__fn.push ( function (){
 			
 			try {
 				ethereum.request({
+					
 					method: 'eth_signTypedData',
 					params: [ params ,  account],
+
 				}).then((result)=>{
 		
 					callback(true, result)

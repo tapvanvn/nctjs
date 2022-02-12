@@ -3,7 +3,7 @@ __pure__waiting__fn.push ( function (){
 	var GuiClass = __pure__mod__.GuiClass
 	var p = __pure__mod__.Pure
 	var TopLayerClass = GuiClass.extend ( "TopLayer",{
-		init : function ( zIndex ){
+		init : function ( zIndex, defaultClose ){
 			this.base ({
 				className : "toplayer",
 			})
@@ -29,12 +29,17 @@ __pure__waiting__fn.push ( function (){
 			this.container.append ( this.foot )
 			this.append ( this.container )
 			p.dom.appendRoot ( this.dom )
+			
 			var self = this
-			p.event.bind ( "click", this.head.dom.getElementsByClassName ( 'btn-close')[ 0 ],
-			()=>{
-				self.hide ()
+			if(typeof defaultClose === undefined || defaultClose) {
+				p.event.bind ( "click", this.head.dom.getElementsByClassName ( 'btn-close')[ 0 ],
+					()=>{
+						self.hide ()
+					}
+				)
+			} else {
+				this.head.dom.getElementsByClassName ( 'btn-close')[ 0 ].style.display = 'none';
 			}
-			)
 		},
 		showContent : function ( title , content , behave ){
 			this.content.dom.innerHTML = ""
@@ -97,11 +102,11 @@ __pure__waiting__fn.push ( function (){
 			p.dom.appendRoot ( this.dom )
 			var self = this
 			p.event.bind ( "click", this.dom ,
-			( evt )=>{
-				if( evt.target == self.dom ){
-					self.hide ()
+				( evt )=>{
+					if( evt.target == self.dom ){
+						self.hide ()
+					}
 				}
-			}
 			)
 		},
 		showContent : function ( content , behave ){
@@ -131,9 +136,9 @@ __pure__waiting__fn.push ( function (){
 	})
 	window.topLayer ={
 		zIndex : 1000 ,
-		showForm : function ( title , content , behave ){
+		showForm : function ( title , content , behave, defaultClose ){
 			this.zIndex ++
-			var layer = new TopLayerClass ( this.zIndex )
+			var layer = new TopLayerClass ( this.zIndex, defaultClose )
 			layer.showContent ( title , content , behave )
 			return layer
 		},
