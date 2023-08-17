@@ -29,7 +29,18 @@ __pure__waiting__fn.push ( function (){
 						Context : self , fn : function ( message ){
 							var dom = window.templater.getDom ( self.item_template.content )
 							p.dom.appendRoot ( dom )
-							dom.innerHTML = message
+							if(typeof message == 'string')
+							{
+								dom.innerHTML = message
+							}
+							else if(typeof message == 'object')
+							{
+								if(typeof message.content == 'string')
+									dom.innerHTML = message.content
+
+								if(typeof message.class == 'string')
+									p.dom.bindStyle(dom,message.class)
+							}
 							dom.style.zIndex = self.index ++
 							window.nct.core.bind ( dom )
 					}})
