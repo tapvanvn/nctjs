@@ -211,7 +211,8 @@ __pure__waiting__fn.push( function()
             if(dom.hasAttribute(prop_name) ) 
             {
                 var id = dom.getAttribute(prop_name);
-                this._bind[type].splice(id, 1);
+                this._bind[type][id] = null;
+                //this._bind[type].splice(id, 1);
             }
         }
     };
