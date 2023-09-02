@@ -214,6 +214,29 @@ __pure__waiting__fn.push( function()
                 this._bind[type][id] = null;
                 //this._bind[type].splice(id, 1);
             }
+        },
+
+        unbindAll: function(element)
+        {
+            if(element instanceof __pure__mod__.GuiClass) {
+                element = element.dom
+            }
+
+            if( typeof element.hasAttribute !== 'undefined' 
+            && typeof element.getAttribute !== 'undefined' 
+            && element.hasAttribute("nct-init") ){
+  
+                var types  = element.getAttribute("nct-init") ;
+
+                types.toString().split(",").forEach(function(type){
+    
+                    nct.core.unbind(type, element);
+                });
+            }
+
+            element.childNodes.forEach((node)=>{
+                nct.core.unbindAll(node);
+            });
         }
     };
 
