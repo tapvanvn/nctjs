@@ -16,11 +16,20 @@ __pure__waiting__fn.push ( function (){
 				init : function ( dom , ctx ){
 					var self = this
 					self.index = 100
+					self.prefix = ""
 					var template = "toast_item"
 					if( dom.hasAttribute ( "template")){
 						template = dom.getAttribute ( "template")
 					}
-					window.templater.load ( "template/"+ template + ".html",
+					if(dom.hasAttribute("prefix"))
+					{
+						self.prefix = dom.getAttribute("prefix")
+						if(self.prefix.length > 0)
+						{
+							self.prefix += "/"
+						} 
+					}
+					window.templater.load ( self.prefix + "template/"+ template + ".html",
 					( template )=>{
 						self.item_template = template
 					}
