@@ -31,7 +31,7 @@ __pure__waiting__fn.push ( function (){
 			p.dom.appendRoot ( this.dom )
 			
 			var self = this
-			if(typeof defaultClose === undefined || defaultClose) {
+			if(typeof defaultClose === 'undefined' || defaultClose) {
 				p.event.bind ( "click", this.head.dom.getElementsByClassName ( 'btn-close')[ 0 ],
 					()=>{
 						self.hide ()

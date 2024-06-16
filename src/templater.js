@@ -1,6 +1,8 @@
 var __pure__waiting__fn = window.__pure__waiting__fn ||[]
 __pure__waiting__fn.push ( function (){
 	var Class = __pure__mod__.Class
+	var p = __pure__mod__.Pure
+
 	var Template = Class.extend ( "Template",{
 		init : function ( path , callback ){
 			this.path = path
@@ -59,4 +61,22 @@ __pure__waiting__fn.push ( function (){
 		}
 	}
 	window.templater = Templater
+	var template_loader = Class.extend ( "TemplateLoader",{
+		init : function ( dom , ctx )
+		{
+			this.dom = dom 
+			this.ctx = ctx
+			var self = this
+			var tpl = dom.getAttribute('tpl');
+			window.templater.load(tpl,
+			(template) => {
+				var temp_dom = window.templater.getDom(template.content)
+				window.nct.core.bind(temp_dom)
+				dom.parentNode.appendChild(temp_dom)
+				window.nct.core.unbindAll(dom)
+				dom.parentNode.removeChild(dom)
+			})
+		},
+	})
+	window.nct.core.regType ( "template_loader", template_loader )
 })

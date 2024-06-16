@@ -237,6 +237,11 @@ __pure__waiting__fn.push( function()
             element.childNodes.forEach((node)=>{
                 nct.core.unbindAll(node);
             });
+        },
+        //clear all binded object
+        clear : function() 
+        {
+            this._bind = {}
         }
     };
 
