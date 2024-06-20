@@ -97,11 +97,36 @@ __pure__waiting__fn.push( function()
                 for( var i = 0; i < mod_define.resources.length; i++)
                 {
                     let url = mod_define.resources[i].url
+                    
                     if(this.resources[url].isLoaded() == false) 
                     {
-                        urls[urls.length] = url
-                        queue.add(new TaskResourceLoad({ url: url, type: mod_define.resources[i].type }));
+                        if(mod_define.resources[i].type == "template")
+                        {
+                            if(typeof window.templater == 'undefined')
+                            {
+                                console.log("templater is required for loading tempate")
+                            } 
+                            else 
+                            {
+                                var task = new Task();
+                                task.fn = function(task, param) 
+                                {
+                                    console.log("load:",param.path)
+                                    window.templater.load(param.path)
+                                }
+                                task.Param = {
+                                    path: url
+                                }
+                                queue.add(task);
+                            }
+                        }
+                        else 
+                        {
+                            urls[urls.length] = url
+                            queue.add(new TaskResourceLoad({ url: url, type: mod_define.resources[i].type }));
+                        }
                     }
+                    
                 }
                 var task_init = new Task();
                 task_init.fn = function(task, param) 
@@ -141,10 +166,34 @@ __pure__waiting__fn.push( function()
                     for( var j = 0; j < mod_define.resources.length; j++)
                     {
                         let url = mod_define.resources[j].url
+                        
                         if(this.resources[url].isLoaded() == false) 
                         {
-                            urls[urls.length] = url
-                            queue.add(new TaskResourceLoad({ url: url, type: mod_define.resources[j].type }));
+                            if(mod_define.resources[j].type == "template")
+                            {
+                                if(typeof window.templater == 'undefined')
+                                {
+                                    console.log("templater is required for loading tempate")
+                                } 
+                                else 
+                                {
+                                    var task = new Task();
+                                    task.fn = function(task, param) 
+                                    {
+                                        window.templater.load(param.path)
+                                        task.onDone.callDo()
+                                    }
+                                    task.Param = {
+                                        path: url
+                                    }
+                                    queue.add(task);
+                                }
+                            }
+                            else 
+                            {
+                                urls[urls.length] = url
+                                queue.add(new TaskResourceLoad({ url: url, type: mod_define.resources[j].type }));
+                            }
                         }
                     }
                 } else {
