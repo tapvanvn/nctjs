@@ -111,8 +111,8 @@ __pure__waiting__fn.push( function()
                                 var task = new Task();
                                 task.fn = function(task, param) 
                                 {
-                                    console.log("load:",param.path)
                                     window.templater.load(param.path)
+                                    task.onDone.callDo()
                                 }
                                 task.Param = {
                                     path: url
