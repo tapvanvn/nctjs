@@ -2,6 +2,27 @@
 //author: Duy Nguyen <tapvanvn@gmail.com>
 //we assume that pure/src/pure.js is there
 
+class NctModule 
+{
+    constructor(dom, ctx)
+    {
+        this.dom = dom
+        this.ctx = ctx
+        this.rootPath = ""
+    }
+    setRootPath(root_path)
+    {
+        this.rootPath = root_path
+    }
+    getRootPath()
+    {
+        return this.rootPath
+    }
+    getFilePath(sub_file_path)
+    {
+        return this.rootPath == "" ? sub_file_path : this.rootPath + "/" + sub_file_path
+    }
+}
 var __pure__waiting__fn = window.__pure__waiting__fn || [];
 
 __pure__waiting__fn.push( function()

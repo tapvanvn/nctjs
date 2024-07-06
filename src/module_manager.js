@@ -1,15 +1,27 @@
 class ModuleDefine 
 {
-    constructor(name)
+    constructor(name, root_path, dependencies)
     {
         this.name = name
         this.resources = []
+        this.root_path = typeof root_path == 'string' ? root_path : ""
+        this.dependencies = dependencies | []
     }
-    addResource(type, url) {
-        this.resources[this.resources.length] = {
+    addResource(type, url) 
+    {
+        this.resources[this.resources.length] = 
+        {
             type:type,
             url: url
         };
+    }
+    getRootPath()
+    {
+        return this.root_path
+    }
+    getFilePath(sub_file_path)
+    {
+        return this.root_path + "/" + sub_file_path
     }
 }
 class ResourceRecord 
@@ -66,6 +78,14 @@ __pure__waiting__fn.push( function()
         isLoaded(mod_name)
         {
             return !(typeof this.loadedModules[mod_name] == 'undefined' || this.loadedModules[mod_name] == false)
+        }
+        getModuleRootPath(mod_name) 
+        {
+            return (typeof this.moduleDefines[mod_name] == 'undefined') ? "" : this.moduleDefines[mod_name].getRootPath();
+        }
+        getModuleFilePath(mod_name, file_path) 
+        {
+            return (typeof this.moduleDefines[mod_name] == 'undefined') ? file_path : this.moduleDefines[mod_name].getFilePath(file_path)
         }
         //define information of module
         register(mod_define) 

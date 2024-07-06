@@ -82,6 +82,10 @@ __pure__waiting__fn.push ( function (){
 			}
 		},
 		show : function (){
+			if(this.dom.parentNode == null)
+			{
+				p.dom.appendRoot ( this.dom )
+			}
 			this.bindStyle ( "active")
 		}
 	})
